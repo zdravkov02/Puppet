@@ -28,14 +28,14 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  # DB - CentOS Stream 8
+  # DB - Debian 11
   config.vm.define "db" do |db|
-    db.vm.box = "shekeriev/centos-stream-8"
+    db.vm.box = "shekeriev/debian-11"
     db.vm.hostname = "db"
     db.vm.network "private_network", ip: "192.168.99.102"
     db.vm.synced_folder "shared/db", "/shared"
     db.vm.provision "shell", path: "initial-config/add_hosts.sh"
-    db.vm.provision "shell", path: "initial-config/install_puppet_redhat.sh", privileged: false
+    db.vm.provision "shell", path: "initial-config/install_puppet_debian.sh", privileged: false
     db.vm.provision "shell", path: "initial-config/modules_db.sh", privileged: false
 
     db.vm.provision "puppet" do |puppet|
@@ -50,5 +50,6 @@ Vagrant.configure("2") do |config|
       v.cpus = 1
     end
   end
+  
   
 end
