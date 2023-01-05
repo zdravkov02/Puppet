@@ -50,6 +50,29 @@ Vagrant.configure("2") do |config|
       v.cpus = 1
     end
   end
-  
+
+  # Docker - Debian 11
+  config.vm.define "docker" do |docker|
+    docker.vm.box = "shekeriev/debian-11"
+    docker.vm.hostname = "docker"
+    docker.vm.network "private_network", ip: "192.168.99.103"
+    docker.vm.synced_folder "shared/", "/shared"
+    docker.vm.provision "shell", path: "initial-config/add_hosts.sh"
+    docker.vm.provision "shell", path: "initial-config/docker_setup.sh"
+    docker.vm.provision "shell", path: "initial-config/install_puppet_debian.sh", privileged: false
+    docker.vm.provision "shell", path: "initial-config/modules_docker.sh", privileged: false
+
+    docker.vm.provision "puppet" do |puppet|
+      puppet.manifests_path = "manifests"
+      puppet.manifest_file = "docker.pp"
+      puppet.options = "--verbose --debug"
+    end
+
+    docker.vm.provider "virtualbox" do |v|
+      v.gui = false
+      v.memory = 1024
+      v.cpus = 1
+    end
+  end
   
 end
